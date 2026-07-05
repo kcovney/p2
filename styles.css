@@ -1,0 +1,51 @@
+html, body {
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 50px;
+    background-color: #121214;
+    color: white;
+    overscroll-behavior: none;
+}
+
+#heading {
+    text-align: center;
+    font-size: 2.5rem;
+    text-transform: uppercase;
+    margin-bottom: 7rem;
+    margin-top: 0.3rem;
+    letter-spacing: 0.3rem;
+}
+
+table {
+    margin: 0 auto;
+}
+
+#keyboard_container {
+    margin-top: 7rem;
+    text-align: center;
+}
+
+.guess_box_input {
+    text-align: center;
+    width: 60px;
+    height: 60px;
+    padding-top: 30px;
+    padding-bottom: 2rem;
+    font-size: 2.2rem;
+    text-transform: uppercase;
+    font-weight: 700;
+    color: white;
+    background-color: #121214;
+    border: 2px solid #3A3A3B;
+    caret-color: transparent;
+    outline: none;
+}
+
+.guess_box_input:not(:placeholder-shown) {
+    border: 2px solid #565758;
+}
+
+* {
+    box-sizing: border-box;
+}
