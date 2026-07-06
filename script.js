@@ -6,6 +6,7 @@ const FIRST_ROW = "row_a";
 const LAST_ROW = "row_f";
 let selected_box = document.getElementById(FIRST_BOX);
 let selected_row = document.getElementById(FIRST_ROW);
+let alert_timer_id = null;
 selected_box.focus();
 highlight_box();
 add_event_listeners();
@@ -42,10 +43,11 @@ function handle_keydown(event) {
         }
     }
     else if (event.key === "Enter") {
+        console.log("enter pressed");
         const row = Array.from(selected_row.children);
         const word = row.map(box => box.children[0].children[0].value).filter(l => l !== "");
         if (word.length !== 5) {
-            
+            show_alert("Not enough letters");
         }
     }
 }
@@ -117,6 +119,20 @@ function highlight_box() {
 
 function dehighlight_box() {
     selected_box.style.backgroundColor = "#121214";
+}
+
+function show_alert(message, timeout=1500) {
+    console.log(`show_alert("${message}") called`)
+    const alert_box = document.getElementById("alert_box");
+    if (alert_timer_id) {
+        clearTimeout(alert_timer_id);
+    }
+    alert_message.textContent = message;
+    alert_box.classList.remove("hidden");
+
+    alert_timer_id = setTimeout(() => {
+        alert_box.classList.add("hidden");
+    }, timeout);
 }
 
 function test() {
