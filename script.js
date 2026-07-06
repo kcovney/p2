@@ -4,6 +4,9 @@ const FIRST_BOX = "a1";
 const LAST_BOX = "f5";
 const FIRST_ROW = "row_a";
 const LAST_ROW = "row_f";
+const WORDLIST_PATH = "wordlists/wordlist_short.txt";
+let word_set = new Set();
+load_words();
 let selected_box = document.getElementById(FIRST_BOX);
 let selected_row = document.getElementById(FIRST_ROW);
 let alert_timer_id = null;
@@ -43,13 +46,25 @@ function handle_keydown(event) {
         }
     }
     else if (event.key === "Enter") {
-        console.log("enter pressed");
         const row = Array.from(selected_row.children);
-        const word = row.map(box => box.children[0].children[0].value).filter(l => l !== "");
+        const word = row.map(box => box.children[0].children[0].value).filter(l => l !== "").join("");
         if (word.length !== 5) {
             show_alert("Not enough letters");
         }
+        else {
+            console.log(`${word} in list? ${check_word(word)}`);
+        }
     }
+}
+
+async function load_words() {
+    const response = await fetch(WORDLIST_PATH);
+    const text = await response.text();
+    word_set = new Set(text.split("\n").map(word => word.trim().toLowerCase()));
+}
+
+function check_word(target) {
+    return word_set.has(target);
 }
 
 function valid_letter_guess(event) {
@@ -122,7 +137,6 @@ function dehighlight_box() {
 }
 
 function show_alert(message, timeout=1500) {
-    console.log(`show_alert("${message}") called`)
     const alert_box = document.getElementById("alert_box");
     if (alert_timer_id) {
         clearTimeout(alert_timer_id);
