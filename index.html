@@ -5,13 +5,14 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
         <title>Copycat Wordle</title>
         <link rel="stylesheet" href="styles.css">
+        <script src="script.js" defer></script>
     </head>
     <body>
         <h1 id="heading">wordle</h1>
         <div id="game_container">
             <div id="guesses_container">
                 <table id="guesses">
-                    <tr>
+                    <tr id="row_a">
                         <td>
                             <form class="guess_box_form">
                                 <input class="guess_box_input" maxlength="1" type="text" placeholder=" " id="a1">
@@ -38,7 +39,7 @@
                             </form>
                         </td>
                     </tr>
-                    <tr>
+                    <tr id="row_b">
                         <td>
                             <form class="guess_box_form">
                                 <input class="guess_box_input" maxlength="1" type="text" placeholder=" " id="b1">
@@ -65,7 +66,7 @@
                             </form>
                         </td>
                     </tr>
-                    <tr>
+                    <tr id="row_c">
                         <td>
                             <form class="guess_box_form">
                                 <input class="guess_box_input" maxlength="1" type="text" placeholder=" " id="c1">
@@ -92,7 +93,7 @@
                             </form>
                         </td>
                     </tr>
-                    <tr>
+                    <tr id="row_d">
                         <td>
                             <form class="guess_box_form">
                                 <input class="guess_box_input" maxlength="1" type="text" placeholder=" " id="d1">
@@ -119,7 +120,7 @@
                             </form>
                         </td>
                     </tr>
-                    <tr>
+                    <tr id="row_e">
                         <td>
                             <form class="guess_box_form">
                                 <input class="guess_box_input" maxlength="1" type="text" placeholder=" " id="e1">
@@ -146,7 +147,7 @@
                             </form>
                         </td>
                     </tr>
-                    <tr>
+                    <tr id="row_f">
                         <td>
                             <form class="guess_box_form">
                                 <input class="guess_box_input" maxlength="1" type="text" placeholder=" " id="f1">
