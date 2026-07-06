@@ -2,9 +2,12 @@ const VALID_LETTERS = ["a", "b", "c", "d", "e", "f"];
 const VALID_NUMBERS = ["1", "2", "3", "4", "5"];
 const FIRST_BOX = "a1";
 const LAST_BOX = "f5";
+const FIRST_ROW = "row_a";
+const LAST_ROW = "row_f";
 let selected_box = document.getElementById(FIRST_BOX);
+let selected_row = document.getElementById(FIRST_ROW);
 selected_box.focus();
-highlight_cell();
+highlight_box();
 add_event_listeners();
 
 function add_event_listeners() {
@@ -16,9 +19,9 @@ function add_event_listeners() {
             event.preventDefault();
         });
     });
-    window.addEventListener("focus", () => {
+    window.addEventListener("click", () => {
         selected_box.focus();
-        highlight_cell();
+        highlight_box();
     });
 }
 
@@ -38,6 +41,13 @@ function handle_keydown(event) {
             selected_box.value = "";
         }
     }
+    else if (event.key === "Enter") {
+        const row = Array.from(selected_row.children);
+        const word = row.map(box => box.children[0].children[0].value).filter(l => l !== "");
+        if (word.length !== 5) {
+            
+        }
+    }
 }
 
 function valid_letter_guess(event) {
@@ -48,23 +58,24 @@ function is_alpha(event) {
     return /[a-zA-Z]/.test(event.key);
 }
 
+
 function move_cursor_forward() {
     curr_box_id = selected_box.id;
     if (curr_box_id !== "f5") {
-        dehighlight_cell()
+        dehighlight_box()
         selected_box = document.getElementById(next_box_id(curr_box_id))
         selected_box.focus();
-        highlight_cell();
+        highlight_box();
     }
 }
 
 function move_cursor_backward() {
     curr_box_id = selected_box.id;
     if (curr_box_id !== FIRST_BOX) {
-        dehighlight_cell()
+        dehighlight_box()
         selected_box = document.getElementById(prev_box_id(curr_box_id))
         selected_box.focus();
-        highlight_cell();
+        highlight_box();
     }
 }
 
@@ -100,11 +111,11 @@ function validate_box_id_string(box_id_string, direction="forward") {
     }
 }
 
-function highlight_cell() {
+function highlight_box() {
     selected_box.style.backgroundColor = "maroon";
 }
 
-function dehighlight_cell() {
+function dehighlight_box() {
     selected_box.style.backgroundColor = "#121214";
 }
 
