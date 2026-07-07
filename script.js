@@ -12,6 +12,7 @@ const SOFT_MATCH_COLOR = "#B59F3B";
 const NO_MATCH_COLOR = "#3A3A3B";
 const BACKGROUND_COLOR = "#121214";
 
+let game_over = false;
 let target_word;
 let word_set = new Set();
 let selected_box = document.getElementById(FIRST_BOX);
@@ -89,7 +90,9 @@ function handle_valid_guess(word) {
         }
     }
     if (word.every((letter, index) => letter === target_word[index])) {
-        handle_win();
+        game_over = true;
+        handle_win("You win!");
+        return;
     }
     for (let i = 0; i < WORD_LENGTH - 1; i++) {
         for (let j = i + 1; j < WORD_LENGTH; j++) {
@@ -112,8 +115,10 @@ function handle_valid_guess(word) {
     highlight_box();
 }
 
-function handle_win() {
-
+function handle_win(message) {
+    const game_over_box = document.getElementById("game_over_box");
+    alert_message.textContent = message;
+    alert_box.classList.remove("hidden");
 }
 
 function next_row_id(row_id_string) {
@@ -317,26 +322,5 @@ c1 c2 c3 c4 c5
 d1 d2 d3 d4 d5
 e1 e2 e3 e4 e5
 f1 f2 f3 f4 f5
-
-box input logic:
-
-- first box is selected on page load
-- if user types a letter in one of the first 4 boxes of a row, 
-focus moves to the next box of that row
-- typing in the last letter of a row simply adds the letter without advancing the cursor
-- if user deletes a letter in one of the last 4 boxes of a row,
-focus moves to the previous box of that row
-- deleting the first letter of a row simply deletes the letter without advancing the cursor
-- if the user presses enter
-    - if there aren't enough letters
-        alert: Not enough letters
-        shake row
-    - else if the input isn't a valid word
-        alert: Not in word list
-        shake row
-    - else (all 5 boxes in the row filled in and word a valid word)
-        - lock in guess (animate)
-        - move cursor to next row
-
 
 */
