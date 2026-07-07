@@ -432,7 +432,6 @@ GameKeyboard.prototype.set_key_state = function(letter, state) {
 
 /*
 clears the match-state class from every key on the keyboard
-currently unused. would be needed for a "play again" feature without a full page reload
 */
 GameKeyboard.prototype.reset_key_states = function() {
     Object.values(this.key_elements).forEach(key_element => {
@@ -448,7 +447,6 @@ GameKeyboard.prototype.disable = function() {
 
 /*
 renders the virtual keyboard responsive again when a new game is started
-currently unused. would be needed for a "play again" feature without a full page reload
 */
 GameKeyboard.prototype.enable = function() {
     this.disabled = false;
