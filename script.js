@@ -12,12 +12,12 @@ const SOFT_MATCH_COLOR = "#B59F3B";
 const NO_MATCH_COLOR = "#3A3A3B";
 const BACKGROUND_COLOR = "#121214";
 
-
 let target_word;
 let word_set = new Set();
 let selected_box = document.getElementById(FIRST_BOX);
 let selected_row = document.getElementById(FIRST_ROW);
 let alert_timer_id = null;
+let num_matches = 0;
 
 selected_box.focus();
 load_words();
@@ -49,7 +49,7 @@ function handle_keydown(event) {
         if (event.repeat) {
             return;
         }
-        if (event.target.id[1] === "5" && selected_box.value !== "") {
+        if ((event.target.id[1] === "5" && selected_box.value !== "") || event.target.id[1] === "1") {
             selected_box.value = "";
         }
         else {
@@ -78,30 +78,49 @@ function get_target_word() {
 }
 
 function handle_valid_guess(word) {
+    const temp_target_word = [...target_word];
     const box_colors = [null, null, null, null, null];
     const row = Array.from(selected_row.children).map(box => box.children[0].children[0]);
     for (let i = 0; i < WORD_LENGTH; i++) {
-        if (word[i] === target_word[i]) {
+        if (word[i] === temp_target_word[i]) {
             row[i].style.backgroundColor = HARD_MATCH_COLOR;
             box_colors[i] = HARD_MATCH_COLOR;
-            target_word[i] = "";
+            temp_target_word[i] = "";
         }
+    }
+    if (word.every((letter, index) => letter === target_word[index])) {
+        handle_win();
     }
     for (let i = 0; i < WORD_LENGTH - 1; i++) {
         for (let j = i + 1; j < WORD_LENGTH; j++) {
-            if (word[i] === target_word[j]) {
+            if (word[i] === temp_target_word[j]) {
                 row[i].style.backgroundColor = SOFT_MATCH_COLOR;
                 box_colors[i] = SOFT_MATCH_COLOR;
-                target_word[j] = "";
+                temp_target_word[j] = "";
                 break;
             }
         }
     }
-    target_word.forEach((letter, index) => {
+    temp_target_word.forEach((letter, index) => {
         if (!box_colors[index]) {
             row[index].style.backgroundColor = NO_MATCH_COLOR;
         }
     });
+    selected_row = document.getElementById(next_row_id(selected_row.id));
+    selected_box = document.getElementById(next_box_id(selected_box.id));
+    selected_box.focus();
+    highlight_box();
+}
+
+function handle_win() {
+
+}
+
+function next_row_id(row_id_string) {
+    if (row_id_string === "row_f") {
+        return "row_f";
+    }
+    return "row_" + VALID_LETTERS[VALID_LETTERS.indexOf(row_id_string[row_id_string.length - 1]) + 1];
 }
 
 async function load_words() {
@@ -153,6 +172,9 @@ function move_cursor_backward() {
 function prev_box_id(box_id_string) {
     validate_box_id_string(box_id_string, "backward");
 
+    if (box_id_string === "a1") {
+        return "a1"
+    }
     const letter = box_id_string[0];
     const digit = parseInt(box_id_string[1], 10);
 
@@ -165,6 +187,9 @@ function prev_box_id(box_id_string) {
 function next_box_id(box_id_string) {
     validate_box_id_string(box_id_string);
 
+    if (box_id_string === "f5") {
+        return "f5"
+    }
     const letter = box_id_string[0];
     const digit = parseInt(box_id_string[1], 10);
 
@@ -273,8 +298,15 @@ function test() {
     console.assert(prev_box_id("f3") === "f2");
     console.assert(prev_box_id("f4") === "f3");
     console.assert(prev_box_id("f5") === "f4");
+
+    console.assert(next_row_id("row_a") === "row_b");
+    console.assert(next_row_id("row_b") === "row_c");
+    console.assert(next_row_id("row_c") === "row_d");
+    console.assert(next_row_id("row_d") === "row_e");
+    console.assert(next_row_id("row_e") === "row_f");
+    console.assert(next_row_id("row_f") === "row_f");
 }
-test();
+// test();
 
 /*
 box layout: 
