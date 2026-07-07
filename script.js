@@ -5,12 +5,22 @@ const LAST_BOX = "f5";
 const FIRST_ROW = "row_a";
 const LAST_ROW = "row_f";
 const WORDLIST_PATH = "wordlists/wordlist_short.txt";
+const WORD_LENGTH = 5;
+const HIGHLIGHT_COLOR = "#500000";
+const HARD_MATCH_COLOR = "#538D4E";
+const SOFT_MATCH_COLOR = "#B59F3B";
+const NO_MATCH_COLOR = "#3A3A3B";
+const BACKGROUND_COLOR = "#121214";
+
+
+let target_word;
 let word_set = new Set();
-load_words();
 let selected_box = document.getElementById(FIRST_BOX);
 let selected_row = document.getElementById(FIRST_ROW);
 let alert_timer_id = null;
+
 selected_box.focus();
+load_words();
 highlight_box();
 add_event_listeners();
 
@@ -18,7 +28,9 @@ function add_event_listeners() {
     const guess_box_inputs = document.querySelectorAll(".guess_box_input");
     guess_box_inputs.forEach(box => {
         box.addEventListener("keydown", handle_keydown);
-        box.addEventListener("input", move_cursor_forward);
+        box.addEventListener("input", (event) => {
+            handle_input(event);
+        });
         box.addEventListener("mousedown", (event) => {
             event.preventDefault();
         });
@@ -37,7 +49,7 @@ function handle_keydown(event) {
         if (event.repeat) {
             return;
         }
-        if (selected_box.id === LAST_BOX && selected_box.value !== "") {
+        if (event.target.id[1] === "5" && selected_box.value !== "") {
             selected_box.value = "";
         }
         else {
@@ -46,25 +58,61 @@ function handle_keydown(event) {
         }
     }
     else if (event.key === "Enter") {
-        const row = Array.from(selected_row.children);
-        const word = row.map(box => box.children[0].children[0].value).filter(l => l !== "").join("");
-        if (word.length !== 5) {
+        const guess_word = Array.from(selected_row.children).map(box => box.children[0].children[0].value).filter(l => l !== "");
+        if (guess_word.length !== WORD_LENGTH) {
             show_alert("Not enough letters");
         }
+        else if (!check_word(guess_word)) {
+            show_alert("Not in word list");
+        }
         else {
-            console.log(`${word} in list? ${check_word(word)}`);
+            handle_valid_guess(guess_word);
         }
     }
+}
+
+function get_target_word() {
+    // const words_array = [...word_set];
+    // return words_array[Math.floor(Math.random() * words_array.length)];
+    return ["b", "e", "f", "i", "t"];
+}
+
+function handle_valid_guess(word) {
+    const box_colors = [null, null, null, null, null];
+    const row = Array.from(selected_row.children).map(box => box.children[0].children[0]);
+    for (let i = 0; i < WORD_LENGTH; i++) {
+        if (word[i] === target_word[i]) {
+            row[i].style.backgroundColor = HARD_MATCH_COLOR;
+            box_colors[i] = HARD_MATCH_COLOR;
+            target_word[i] = "";
+        }
+    }
+    for (let i = 0; i < WORD_LENGTH - 1; i++) {
+        for (let j = i + 1; j < WORD_LENGTH; j++) {
+            if (word[i] === target_word[j]) {
+                row[i].style.backgroundColor = SOFT_MATCH_COLOR;
+                box_colors[i] = SOFT_MATCH_COLOR;
+                target_word[j] = "";
+                break;
+            }
+        }
+    }
+    target_word.forEach((letter, index) => {
+        if (!box_colors[index]) {
+            row[index].style.backgroundColor = NO_MATCH_COLOR;
+        }
+    });
 }
 
 async function load_words() {
     const response = await fetch(WORDLIST_PATH);
     const text = await response.text();
     word_set = new Set(text.split("\n").map(word => word.trim().toLowerCase()));
+    target_word = get_target_word();
 }
 
-function check_word(target) {
-    return word_set.has(target);
+function check_word(word) {
+    return word_set.has(word.join(""));
 }
 
 function valid_letter_guess(event) {
@@ -75,12 +123,18 @@ function is_alpha(event) {
     return /[a-zA-Z]/.test(event.key);
 }
 
+function handle_input(event) {
+    if (event.target.id[1] !== "5") {
+        move_cursor_forward();
+    }
+}
+
 
 function move_cursor_forward() {
     curr_box_id = selected_box.id;
     if (curr_box_id !== "f5") {
-        dehighlight_box()
-        selected_box = document.getElementById(next_box_id(curr_box_id))
+        dehighlight_box();
+        selected_box = document.getElementById(next_box_id(curr_box_id));
         selected_box.focus();
         highlight_box();
     }
@@ -114,7 +168,7 @@ function next_box_id(box_id_string) {
     const letter = box_id_string[0];
     const digit = parseInt(box_id_string[1], 10);
 
-    if (digit === 5) {
+    if (digit === WORD_LENGTH) {
         return VALID_LETTERS[VALID_LETTERS.indexOf(letter) + 1] + "1";
     }
     return letter + String(digit + 1);
@@ -129,11 +183,11 @@ function validate_box_id_string(box_id_string, direction="forward") {
 }
 
 function highlight_box() {
-    selected_box.style.backgroundColor = "maroon";
+    selected_box.style.backgroundColor = HIGHLIGHT_COLOR;
 }
 
 function dehighlight_box() {
-    selected_box.style.backgroundColor = "#121214";
+    selected_box.style.backgroundColor = BACKGROUND_COLOR;
 }
 
 function show_alert(message, timeout=1500) {
