@@ -60,7 +60,7 @@ body {
     top: 100px;
     left: 50%;
     transform: translateX(-50%);
-    background: #121214;
+    background: #D8DADC;
     color: black;
     padding: 0 12px;
     border-radius: 6px;
@@ -136,6 +136,22 @@ table {
 
 .no_match {
     background-color: #3A3A3B;
+}
+
+#restart_button {
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    background: #B8BABC;
+    color: black;
+    padding: 10px 24px;
+    border: none;
+    border-radius: 6px;
+    opacity: 1;
+    transition: opacity 0.3s ease;
+    font-size: 16px;
+    line-height: 1;
+    margin: 10px auto 16px;
+    display: block;
+    cursor: pointer;
 }
 
 * {

@@ -48,6 +48,7 @@ function add_event_listeners() {
     window.addEventListener("click", () => {
         selected_box.focus();
     });
+    document.getElementById("restart_button").addEventListener("click", handle_restart);
 }
 
 // handles any physical keyboard press, allowing only letters, the backspace key, and enter
@@ -192,15 +193,15 @@ function update_keyboard_state(letter, state) {
 // show an alert that the user lost (they made 6 incorrect guesses)
 function handle_loss(message) {
     const game_over_box = document.getElementById("game_over_box");
-    alert_message.textContent = message;
-    alert_box.classList.remove("hidden");
+    game_over_message.textContent = message;
+    game_over_box.classList.remove("hidden");
 }
 
 // show an alert that the user won
 function handle_win(message) {
     const game_over_box = document.getElementById("game_over_box");
-    alert_message.textContent = message;
-    alert_box.classList.remove("hidden");
+    game_over_message.textContent = message;
+    game_over_box.classList.remove("hidden");
 }
 
 // translates a row id ("row_[a-f]") into the next row id (e.g. "row_a" => "row_b")
@@ -325,6 +326,29 @@ function show_alert(message, timeout = 1500) {
     alert_timer_id = setTimeout(() => {
         alert_box.classList.add("hidden");
     }, timeout);
+}
+
+// resets the game to a fresh state: new word, cleared boxes, cleared keyboard colors, hidden popup
+function handle_restart() {
+    game_over = false;
+    letter_states = {};
+    target_word = get_target_word();
+    console.log(`the word is ${target_word.join("")}`);
+
+    document.querySelectorAll(".guess_box_input").forEach(box => {
+        box.value = "";
+        box.style.backgroundColor = BACKGROUND_COLOR;
+    });
+
+    keyboard.reset_key_states();
+    keyboard.enable();
+
+    selected_row = document.getElementById(FIRST_ROW);
+    selected_box = document.getElementById(FIRST_BOX);
+    selected_box.focus();
+
+    document.getElementById("alert_box").classList.add("hidden");
+    document.getElementById("game_over_box").classList.add("hidden");
 }
 
 /*
