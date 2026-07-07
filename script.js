@@ -4,7 +4,7 @@ const FIRST_BOX = "a1";
 const LAST_BOX = "f5";
 const FIRST_ROW = "row_a";
 const LAST_ROW = "row_f";
-const WORDLIST_PATH = "wordlists/wordlist_short.txt";
+const WORDLIST_PATH = "wordlists/wordlist_original.txt";
 const WORD_LENGTH = 5;
 const HIGHLIGHT_COLOR = "#500000";
 const HARD_MATCH_COLOR = "#538D4E";
@@ -32,7 +32,8 @@ adds listeners for the game container, handling the following events:
 - keydown - keyboard key was pressed
 - input - a letter was entered into a guessbox
 - mousedown - the user clicked the mouse
-an additional window click-event listener automatically resumes current-letter focus when the user clicks anywhere in the window
+an additional window click-event listener automatically resumes current-letter 
+focus when the user clicks anywhere in the window
 */
 function add_event_listeners() {
     const guess_box_inputs = document.querySelectorAll(".guess_box_input");
@@ -66,6 +67,7 @@ function handle_keydown(event) {
 
 // handles when the user presses enter on a physical or virtual keyboard
 function handle_enter_press() {
+
     const guess_word = Array.from(selected_row.children).map(box => box.children[0].children[0].value).filter(l => l !== "");
     if (guess_word.length !== WORD_LENGTH) {
         show_alert("Not enough letters");
