@@ -22,6 +22,7 @@ let selected_box = document.getElementById(FIRST_BOX);
 let selected_row = document.getElementById(FIRST_ROW);
 let alert_timer_id = null;
 let num_matches = 0;
+let guess_count = 0;
 
 selected_box.focus();
 load_words();
@@ -67,7 +68,7 @@ function handle_keydown(event) {
 
 // handles when the user presses enter on a physical or virtual keyboard
 function handle_enter_press() {
-
+    // transforms user input into an array of strings (e.g. ["a", "r", "i", "s", "e"])
     const guess_word = Array.from(selected_row.children).map(box => box.children[0].children[0].value).filter(l => l !== "");
     if (guess_word.length !== WORD_LENGTH) {
         show_alert("Not enough letters");
@@ -118,6 +119,7 @@ handles feedback in the event that the user types in a 5 letter word, hits enter
 that word is in the wordlist, and the game hasn't ended
 */
 function handle_valid_guess(word) {
+    guess_count++;
     const temp_target_word = [...target_word];
     const box_colors = [null, null, null, null, null];
     const row = Array.from(selected_row.children).map(box => box.children[0].children[0]);
@@ -192,17 +194,21 @@ function update_keyboard_state(letter, state) {
     }
 }
 
-// show an alert that the user lost (they made 6 incorrect guesses)
+// shows the loss popup, then records the game's guess count and displays the running average
 function handle_loss(message) {
     const game_over_box = document.getElementById("game_over_box");
-    game_over_message.textContent = message;
+    update_guess_stats();
+    const average = get_average_guesses();
+    game_over_message.textContent = `${message} (avg guesses: ${average.toFixed(2)})`;
     game_over_box.classList.remove("hidden");
 }
 
 // show an alert that the user won
 function handle_win(message) {
     const game_over_box = document.getElementById("game_over_box");
-    game_over_message.textContent = message;
+    update_guess_stats();
+    const average = get_average_guesses();
+    game_over_message.textContent = `${message} (avg guesses: ${average.toFixed(2)})`;
     game_over_box.classList.remove("hidden");
 }
 
@@ -334,8 +340,8 @@ function show_alert(message, timeout = 1500) {
 function handle_restart() {
     game_over = false;
     letter_states = {};
+    guess_count = 0;
     target_word = get_target_word();
-    console.log(`the word is ${target_word.join("")}`);
 
     document.querySelectorAll(".guess_box_input").forEach(box => {
         box.value = "";
@@ -351,6 +357,39 @@ function handle_restart() {
 
     document.getElementById("alert_box").classList.add("hidden");
     document.getElementById("game_over_box").classList.add("hidden");
+}
+
+// writes a cookie with a given name, value, and expiration (default 1 year)
+function set_cookie(name, value, days=365) {
+    const expires = new Date(Date.now() + days * 24 * 60 * 60 * 1000).toUTCString();
+    document.cookie = `${name}=${value}; expires=${expires}; path=/`;
+}
+
+// reads a cookie by name, returning null if it doesn't exist
+function get_cookie(name) {
+    const match = document.cookie.match(new RegExp(`(?:^|; )${name}=([^;]*)`));
+    return match ? match[1] : null;
+}
+
+// adds the current game's guess count to the running totals stored in cookies
+function update_guess_stats() {
+    const total_guesses = parseInt(get_cookie("total_guesses") || "0", 10) + guess_count;
+    const total_games = parseInt(get_cookie("total_games") || "0", 10) + 1;
+
+    set_cookie("total_guesses", total_guesses);
+    set_cookie("total_games", total_games);
+}
+
+// calculates the average number of guesses per game across all recorded games
+// returns null if no games have been recorded yet
+function get_average_guesses() {
+    const total_guesses = parseInt(get_cookie("total_guesses") || "0", 10);
+    const total_games = parseInt(get_cookie("total_games") || "0", 10);
+
+    if (total_games === 0) {
+        return null;
+    }
+    return total_guesses / total_games;
 }
 
 /*
@@ -460,7 +499,6 @@ keyboard.onKeyPress = (key) => {
         handle_enter_press();
     }
     else if (key === "Backspace") {
-        console.log(key + " pressed");
         handle_backspace_press();
     }
     else {
