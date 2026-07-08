@@ -469,9 +469,8 @@ GameKeyboard.prototype.set_key_state = function(letter, state) {
     }
 }
 
-/*
-clears the match-state class from every key on the keyboard
-*/
+
+// clears the match-state class from every key on the keyboard
 GameKeyboard.prototype.reset_key_states = function() {
     Object.values(this.key_elements).forEach(key_element => {
         key_element.classList.remove("hard_match", "soft_match", "no_match");
@@ -484,9 +483,8 @@ GameKeyboard.prototype.disable = function() {
     this.container.classList.add("keyboard_disabled");
 }
 
-/*
-renders the virtual keyboard responsive again when a new game is started
-*/
+
+// renders the virtual keyboard responsive again when a new game is started
 GameKeyboard.prototype.enable = function() {
     this.disabled = false;
     this.container.classList.remove("keyboard_disabled");
